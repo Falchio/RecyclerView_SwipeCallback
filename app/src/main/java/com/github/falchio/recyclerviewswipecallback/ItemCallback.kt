@@ -1,9 +1,9 @@
 package com.github.falchio.recyclerviewswipecallback
 
+import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +15,9 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.UP or ItemTouchHelper.DOWN,
     ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
 ) {
-
-    private var isSwipeBack = false;
+    private var isSwipeBack = false
+    private var buttonState = ButtonState.ALL_GONE
+    private val tempButtonWidth = 300
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -27,7 +28,7 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
+        //TODO:
     }
 
     /** Данный метод переопределен для того, чтобы убрать возможность свайпом выкидывать элемент из RecyclerView
@@ -59,6 +60,7 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setTouchListener(
         c: Canvas,
         recyclerView: RecyclerView,
@@ -66,17 +68,31 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
         dX: Float, dY: Float,
         actionState: Int, isCurrentlyActive: Boolean
     ) {
-        recyclerView.setOnTouchListener(TouchListener())
-    }
-
-    inner class TouchListener : View.OnTouchListener {
-        /** Пока свайпом тянут элемент isSwipeBack всё время false, как только элемент отпущен - true */
-        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        recyclerView.setOnTouchListener { view, event ->
             isSwipeBack =
-                event?.action == MotionEvent.ACTION_CANCEL
-                        || event?.action == MotionEvent.ACTION_UP
-            return false
-        }
+                isUserLetGoItem(event) // Пока свайпом тянут элемент isSwipeBack всё время false, как только элемент отпущен - true
 
+            if (isSwipeBack) {
+                calcButtonState(dX)
+
+                if (buttonState != ButtonState.ALL_GONE) {
+
+                }
+            }
+            false
+        }
     }
+
+    private fun calcButtonState(dX: Float) {
+        if (dX < -tempButtonWidth) {
+            buttonState = ButtonState.RIGHT_VISIBLE
+        } else if (dX > tempButtonWidth) {
+            buttonState = ButtonState.LEFT_VISIBLE
+        }
+    }
+
+    /** Данная функция вычисляет отпустил ли пользователь элемент после свайпа */
+    private fun isUserLetGoItem(event: MotionEvent?) =
+        (event?.action == MotionEvent.ACTION_CANCEL
+                || event?.action == MotionEvent.ACTION_UP)
 }

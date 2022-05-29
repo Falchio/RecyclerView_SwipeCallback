@@ -30,8 +30,14 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
 
     }
 
+    /** Данный метод переопределен для того, чтобы убрать возможность свайпом выкидывать элемент из RecyclerView
+     * пока этот метод возвращает "0", свайпиться ни влево ни вправо не будет.
+     * @see isSwipeBack - это переключатель, который следит за состоянием, как только свайп прекращается,
+     * т.е. элемент отпустили, то он переключается на состояние true, затем в этом методе сразу на обратно на false
+     * @see TouchListener - для подробностей по isSwipeBack */
     override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
         if (isSwipeBack) {
+            Log.e(TAG, "convertToAbsoluteDirection: ")
             isSwipeBack = false
             return 0
         }
@@ -46,7 +52,7 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
         dX: Float, dY: Float,
         actionState: Int, isCurrentlyActive: Boolean
     ) {
-        Log.e(TAG, "Action state: $actionState ")
+
         if (actionState == ACTION_STATE_SWIPE) {
             setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
@@ -64,9 +70,8 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
     }
 
     inner class TouchListener : View.OnTouchListener {
+        /** Пока свайпом тянут элемент isSwipeBack всё время false, как только элемент отпущен - true */
         override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
-            Log.e(TAG, "MotionEvent: ${MotionEvent.ACTION_CANCEL} ")
             isSwipeBack =
                 event?.action == MotionEvent.ACTION_CANCEL
                         || event?.action == MotionEvent.ACTION_UP

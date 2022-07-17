@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.util.Log
 import android.view.MotionEvent
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -53,11 +52,19 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
         dX: Float, dY: Float,
         actionState: Int, isCurrentlyActive: Boolean
     ) {
-
-        if (actionState == ACTION_STATE_SWIPE) {
-            setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        // '-' - это свайп влево
+        // '+' - это свайп вправо
+        Log.e(TAG, "onChildDraw: $dX")
+        if (dX > 0) {
+            (viewHolder as CustomAdapter.ViewHolder).setBorder(dX.toInt())
+        } else if (dX < 0) {
+            (viewHolder as CustomAdapter.ViewHolder).setBorder(dX.toInt())
         }
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+//        if (actionState == ACTION_STATE_SWIPE) {
+//            setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+//        }
+//        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     @SuppressLint("ClickableViewAccessibility")

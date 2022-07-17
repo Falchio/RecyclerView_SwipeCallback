@@ -17,22 +17,23 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="some text" />
+            tools:text="SOME TEXT" />
 
         <Button
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="delete"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/archive"
-            app:layout_constraintStart_toEndOf="@+id/text_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/archive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="archive"
+            android:text="arch"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

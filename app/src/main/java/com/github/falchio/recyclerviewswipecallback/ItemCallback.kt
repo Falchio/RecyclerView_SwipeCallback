@@ -61,6 +61,9 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
             (viewHolder as CustomAdapter.ViewHolder).setBorder(dX.toInt())
         }
 
+        //TODO: определять размер кнопки
+        //TODO: блокировать увеличение кнопки после определенного момента
+
 //        if (actionState == ACTION_STATE_SWIPE) {
 //            setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
 //        }

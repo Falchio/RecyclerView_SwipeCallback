@@ -73,15 +73,52 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
                 isUserLetGoItem(event) // Пока свайпом тянут элемент isSwipeBack всё время false, как только элемент отпущен - true
 
             if (isSwipeBack) {
+
                 calcButtonState(dX)
 
                 if (buttonState != ButtonState.ALL_GONE) {
-
+                    if (buttonState != ButtonState.ALL_GONE) {
+                        setTouchDownListener(
+                            c,
+                            recyclerView,
+                            viewHolder,
+                            dX,
+                            dY,
+                            actionState,
+                            isCurrentlyActive
+                        );
+                        setItemsClickable(recyclerView, false);
+                    }
                 }
             }
             false
         }
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setTouchDownListener(
+        c: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float, dY: Float,
+        actionState: Int, isCurrentlyActive: Boolean
+    ) {
+        recyclerView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                setTouchUpListener(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+            false
+        }
+    }
+
 
     private fun calcButtonState(dX: Float) {
         if (dX < -tempButtonWidth) {
@@ -95,4 +132,42 @@ class ItemCallback : ItemTouchHelper.SimpleCallback(
     private fun isUserLetGoItem(event: MotionEvent?) =
         (event?.action == MotionEvent.ACTION_CANCEL
                 || event?.action == MotionEvent.ACTION_UP)
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setTouchUpListener(
+        c: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float, dY: Float,
+        actionState: Int, isCurrentlyActive: Boolean
+    ) {
+        recyclerView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    0f,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+                recyclerView.setOnTouchListener { _, _ -> false }
+                setItemsClickable(recyclerView, true)
+                isSwipeBack = false
+                buttonState = ButtonState.ALL_GONE
+            }
+            false
+        }
+    }
+
+    private fun setItemsClickable(
+        recyclerView: RecyclerView,
+        isClickable: Boolean
+    ) {
+        for (i in 0 until recyclerView.childCount) {
+            recyclerView.getChildAt(i).isClickable = isClickable
+        }
+    }
 }
